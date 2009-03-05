@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SMSBarrage</string>
+	<string name="number">Number:</string>
+	<string name="number_of_messages">Number of Messages:</string>
+	<string name="default_count">2</string>
+	<string name="sending">Sending...</string>
+	<string name="stop">Stop</string>
+	<string name="agree">Agree</string>
+	<string name="disagree">Disagree</string>
+	<string name="warning_title">Warning!</string>
+	<string name="warning">The use of this program is allowed only for legal purposes. Spamming of any kind is strictly prohibited. You, the user, accept any and all responsibilities by using this program.</string>
+	<string name="error_title">Error</string>
+	<string name="error">Sending message failed. Check to make sure the number you are sending to is valid.</string>
+	<string name="ok">OK</string>
+	<string name="message">Message:</string>
+	<string name="send">Send</string>
+</resources>
