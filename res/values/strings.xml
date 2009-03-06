@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SMSBarrage</string>
-	<string name="number">Number:</string>
+	<string name="to_hint">To</string>
 	<string name="number_of_messages">Number of Messages:</string>
 	<string name="default_count">2</string>
+	<string name="delay">Delay Between (ms):</string>
+	<string name="default_delay">1000</string>
 	<string name="sending">Sending...</string>
 	<string name="stop">Stop</string>
 	<string name="agree">Agree</string>
@@ -13,6 +15,6 @@
 	<string name="error_title">Error</string>
 	<string name="error">Sending message failed. Check to make sure the number you are sending to is valid.</string>
 	<string name="ok">OK</string>
-	<string name="message">Message:</string>
+	<string name="message_hint">Message</string>
 	<string name="send">Send</string>
 </resources>

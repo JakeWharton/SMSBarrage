@@ -1,31 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
-   	<TextView
-   		android:id="@+id/number_text"
-   		android:layout_width="fill_parent"
-   		android:layout_height="wrap_content"
-   		android:layout_marginLeft="10dip"
-   		android:layout_marginRight="10dip"
-   		android:layout_marginTop="10dip"
-   		android:text="@string/number"/>
-   	<EditText
-   		android:id="@+id/number"
-   		android:layout_width="fill_parent"
-   		android:layout_height="wrap_content"
-   		android:layout_marginLeft="10dip"
-   		android:layout_marginRight="10dip"
-   		android:layout_below="@id/number_text"/>
+    android:layout_height="fill_parent"
+    android:paddingLeft="10dip"
+    android:paddingRight="10dip"
+    android:paddingTop="10dip"
+    android:paddingBottom="10dip">
+	<com.android.mms.ui.RecipientsEditor
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@+id/recipients_editor"
+		android:hint="@string/to_hint"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:singleLine="true"/>
    	<TextView
    		android:id="@+id/number_of_messages_text"
    		android:layout_width="wrap_content"
    		android:layout_height="wrap_content"
-   		android:layout_marginLeft="10dip"
    		android:layout_marginRight="5dip"
    		android:layout_marginTop="10dip"
    		android:text="@string/number_of_messages"
-   		android:layout_below="@id/number"/>
+   		android:layout_below="@id/recipients_editor"/>
    	<TextView
    		android:id="@+id/number_of_messages_count"
    		android:layout_width="wrap_content"
@@ -33,37 +28,46 @@
    		android:layout_marginTop="10dip"
    		android:layout_toRightOf="@id/number_of_messages_text"
    		android:text="@string/default_count"
-   		android:layout_below="@id/number"/>
+   		android:layout_below="@id/recipients_editor"/>
    	<SeekBar
    		android:id="@+id/number_of_messages"
    		android:layout_width="fill_parent"
    		android:layout_height="wrap_content"
-   		android:layout_marginLeft="10dip"
-   		android:layout_marginRight="10dip"
    		android:max="98"
    		android:layout_below="@id/number_of_messages_text"/>
    	<TextView
-   		android:id="@+id/message_text"
+   		android:id="@+id/delay_text"
+   		android:layout_width="wrap_content"
+   		android:layout_height="wrap_content"
+   		android:layout_marginRight="5dip"
+   		android:layout_marginTop="10dip"
+   		android:text="@string/delay"
+   		android:layout_below="@id/number_of_messages"/>
+   	<TextView
+   		android:id="@+id/delay_count"
+   		android:layout_width="wrap_content"
+   		android:layout_height="wrap_content"
+   		android:layout_marginTop="10dip"
+   		android:layout_toRightOf="@id/delay_text"
+   		android:text="@string/default_delay"
+   		android:layout_below="@id/number_of_messages"/>
+   	<SeekBar
+   		android:id="@+id/delay"
    		android:layout_width="fill_parent"
    		android:layout_height="wrap_content"
-   		android:layout_marginLeft="10dip"
-   		android:layout_marginRight="10dip"
-   		android:layout_marginTop="10dip"
-   		android:layout_below="@id/number_of_messages"
-   		android:text="@string/message"/>
+   		android:max="10000"
+   		android:layout_below="@id/delay_text"/>
    	<EditText
    		android:id="@+id/message"
    		android:layout_width="fill_parent"
    		android:layout_height="wrap_content"
-   		android:layout_marginLeft="10dip"
-   		android:layout_marginRight="10dip"
-   		android:layout_below="@id/message_text"/>
+   		android:hint="@string/message_hint"
+   		android:layout_marginTop="10dip"
+   		android:layout_below="@id/delay"/>
    	<Button
    		android:id="@+id/send"
    		android:layout_width="fill_parent"
    		android:layout_height="wrap_content"
-   		android:layout_marginLeft="10dip"
-   		android:layout_marginRight="10dip"
    		android:layout_marginTop="10dip"
    		android:text="@string/send"
    		android:layout_below="@id/message"/>
