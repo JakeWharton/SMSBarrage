@@ -87,6 +87,11 @@ public class SMSBarrage extends Activity {
 			count = seekCount.getProgress() + PROGRESS_OFFSET;
 			count *= numbers.length;
 			
+			progress = new ProgressDialog(SMSBarrage.this);
+			progress.setTitle(R.string.sending);
+	        progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+	        progress.setButton(getString(R.string.stop), cancelListener);
+
 			progress.setMax(count);
 			progress.setProgress(0);
 			
@@ -125,6 +130,12 @@ public class SMSBarrage extends Activity {
 			SMSBarrage.this.finish();
 		}
 	};
+	private android.content.DialogInterface.OnClickListener cancelListener = new android.content.DialogInterface.OnClickListener() {
+		public void onClick(DialogInterface arg0, int arg1) {
+			seekCount.setProgress(count - current - PROGRESS_OFFSET);
+			count = 0;
+		}
+	};
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -160,6 +171,7 @@ public class SMSBarrage extends Activity {
         seekDelay.setProgress(1000);
         buttonSend = (Button)findViewById(R.id.send);
         buttonSend.setOnClickListener(sendListener);
+        editMessage = (EditText)findViewById(R.id.message);
         reTo = (RecipientsEditor)findViewById(R.id.recipients_editor);
         reTo.setAdapter(new RecipientsAdapter(this));
 	}
