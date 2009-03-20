@@ -11,44 +11,87 @@ public final class R {
     public static final class attr {
     }
     public static final class drawable {
-        public static final int icon=0x7f020000;
+        public static final int compose=0x7f020000;
+        public static final int delete=0x7f020001;
+        public static final int icon=0x7f020002;
+        public static final int preferences=0x7f020003;
     }
     public static final class id {
-        public static final int delay=0x7f050006;
-        public static final int delay_count=0x7f050005;
-        public static final int delay_text=0x7f050004;
-        public static final int label=0x7f05000b;
-        public static final int message=0x7f050007;
-        public static final int name=0x7f05000a;
-        public static final int name_and_label=0x7f050009;
-        public static final int number=0x7f05000c;
-        public static final int number_of_messages=0x7f050003;
-        public static final int number_of_messages_count=0x7f050002;
-        public static final int number_of_messages_text=0x7f050001;
-        public static final int recipients_editor=0x7f050000;
-        public static final int send=0x7f050008;
+        public static final int counts=0x7f060002;
+        public static final int delay=0x7f06000b;
+        public static final int delay_count=0x7f06000a;
+        public static final int delay_text=0x7f060009;
+        public static final int label=0x7f060010;
+        public static final int message=0x7f06000e;
+        public static final int name=0x7f060000;
+        public static final int name_and_label=0x7f06000f;
+        public static final int number=0x7f060011;
+        public static final int number_of_messages=0x7f060008;
+        public static final int number_of_messages_count=0x7f060007;
+        public static final int number_of_messages_text=0x7f060006;
+        public static final int percent=0x7f060003;
+        public static final int progress=0x7f060004;
+        public static final int recipients_editor=0x7f060005;
+        public static final int save=0x7f06000d;
+        public static final int send=0x7f06000c;
+        public static final int status=0x7f060001;
     }
     public static final class layout {
-        public static final int main=0x7f030000;
-        public static final int recipient_filter_item=0x7f030001;
+        public static final int about=0x7f030000;
+        public static final int barrage_header_view=0x7f030001;
+        public static final int barrage_list=0x7f030002;
+        public static final int compose=0x7f030003;
+        public static final int recipient_filter_item=0x7f030004;
     }
     public static final class string {
-        public static final int agree=0x7f040008;
-        public static final int app_name=0x7f040000;
-        public static final int default_count=0x7f040003;
-        public static final int default_delay=0x7f040005;
-        public static final int delay=0x7f040004;
-        public static final int disagree=0x7f040009;
-        public static final int error=0x7f04000d;
-        public static final int error_title=0x7f04000c;
-        public static final int message_hint=0x7f04000f;
-        public static final int number_of_messages=0x7f040002;
-        public static final int ok=0x7f04000e;
-        public static final int send=0x7f040010;
-        public static final int sending=0x7f040006;
-        public static final int stop=0x7f040007;
-        public static final int to_hint=0x7f040001;
-        public static final int warning=0x7f04000b;
-        public static final int warning_title=0x7f04000a;
+        public static final int about_title=0x7f050007;
+        public static final int app_name=0x7f050000;
+        /**  About 
+         */
+        public static final int by=0x7f050015;
+        public static final int compose_default_count=0x7f05001e;
+        public static final int compose_default_delay=0x7f050020;
+        public static final int compose_delay_between=0x7f05001f;
+        public static final int compose_message_hint=0x7f050023;
+        public static final int compose_number_of_messages=0x7f05001d;
+        public static final int compose_save=0x7f050022;
+        public static final int compose_send=0x7f050021;
+        public static final int compose_title=0x7f050005;
+        public static final int compose_to_hint=0x7f05001c;
+        public static final int confirm_delete=0x7f05001a;
+        public static final int confirm_delete_all=0x7f050019;
+        public static final int confirm_delete_title=0x7f050016;
+        public static final int create_new_barrage=0x7f05001b;
+        public static final int disclaimer=0x7f050001;
+        public static final int disclaimer_agree=0x7f050003;
+        public static final int disclaimer_disagree=0x7f050004;
+        public static final int disclaimer_title=0x7f050002;
+        public static final int menu_about=0x7f05000c;
+        public static final int menu_cancel=0x7f050014;
+        public static final int menu_delete=0x7f05000f;
+        public static final int menu_delete_all=0x7f05000a;
+        /**  BarrageList context menu 
+         */
+        public static final int menu_edit=0x7f05000d;
+        /**  BarrageList options menu 
+         */
+        public static final int menu_new_barrage=0x7f050008;
+        public static final int menu_pause=0x7f05000e;
+        public static final int menu_pause_all=0x7f050009;
+        public static final int menu_preferences=0x7f05000b;
+        /**  Preferences options menu 
+         */
+        public static final int menu_restore_defaults=0x7f050010;
+        public static final int menu_save_as_template=0x7f050013;
+        public static final int menu_save_draft=0x7f050012;
+        /**  Compose options menu 
+         */
+        public static final int menu_start_barrage=0x7f050011;
+        public static final int no=0x7f050018;
+        public static final int prefs_title=0x7f050006;
+        public static final int yes=0x7f050017;
+    }
+    public static final class xml {
+        public static final int preferences=0x7f040000;
     }
 }
