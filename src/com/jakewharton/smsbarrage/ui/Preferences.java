@@ -11,8 +11,6 @@ import android.view.MenuItem;
 public class Preferences extends PreferenceActivity {
 	private static final int MENU_RESTORE_DEFAULTS = 0;
 	
-	public static final String PREF_AUTO_START = "pref_gen_auto_start";
-	
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 		addPreferencesFromResource(R.xml.preferences);

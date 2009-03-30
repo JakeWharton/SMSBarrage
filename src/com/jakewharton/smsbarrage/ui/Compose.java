@@ -12,20 +12,20 @@ import android.widget.Button;
 import android.widget.EditText;
 
 public class Compose extends Activity {
-	private static final String TAG="ComposeBarrage";
+	private static final String TAG = "ComposeBarrage";
 	
 	//Options menu
-	private static final int MENU_START_BARRAGE = 0;
-	private static final int MENU_SAVE_DRAFT = 1;
+	private static final int MENU_START_BARRAGE    = 0;
+	private static final int MENU_SAVE_DRAFT       = 1;
 	private static final int MENU_SAVE_AS_TEMPLATE = 2;
-	private static final int MENU_CANCEL = 3;
+	private static final int MENU_CANCEL           = 3;
 	
 	private long mID;
 	
 	private RecipientsEditor mRecipientEditor;
-	private EditText mContents;
-	private Button mSend;
-	private Button mSave;
+	private EditText         mContents;
+	private Button           mSend;
+	private Button           mSave;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,10 +33,11 @@ public class Compose extends Activity {
 		setContentView(R.layout.compose);
 		
 		mRecipientEditor = (RecipientsEditor)findViewById(R.id.recipients_editor);
+		mContents        = (EditText)findViewById(R.id.message);
+		mSend            = (Button)findViewById(R.id.send);
+		mSave            = (Button)findViewById(R.id.save);
+		
 		mRecipientEditor.setAdapter(new RecipientsAdapter(this));
-		mContents = (EditText)findViewById(R.id.message);
-		mSend = (Button)findViewById(R.id.send);
-		mSave = (Button)findViewById(R.id.save);
 	}
 	
 	@Override
@@ -62,15 +63,28 @@ public class Compose extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_START_BARRAGE:
+				startBarrage();
 				return true;
 			case MENU_SAVE_DRAFT:
+				draftBarrage();
 				return true;
 			case MENU_SAVE_AS_TEMPLATE:
+				saveAsTemplate();
 				return true;
 			case MENU_CANCEL:
 				this.finish();
 				return true;
 		}
 		return false;
-	}	
+	}
+	
+	private void startBarrage() {
+		
+	}
+	private void draftBarrage() {
+		
+	}
+	private void saveAsTemplate() {
+		
+	}
 }

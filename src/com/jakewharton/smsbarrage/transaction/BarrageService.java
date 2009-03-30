@@ -48,12 +48,11 @@ public class BarrageService extends Service {
 		
 		@Override
 		public void handleMessage(Message msg) {
-			int serviceId = msg.arg1;
-			Intent intent = (Intent)msg.obj;
+			final int    serviceId = msg.arg1;
+			final Intent intent    = (Intent)msg.obj;
+			final String action    = intent.getAction();
 			
-			String action = intent.getAction();
-			
-			if (ACTION_BOOT_COMPLETED.equals(action)) {
+			if (action.equals(ACTION_BOOT_COMPLETED)) {
 				handleBootCompleted();
 			}
 			

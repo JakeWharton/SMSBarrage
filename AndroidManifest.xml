@@ -13,6 +13,7 @@
     <application android:icon="@drawable/icon"
                  android:name="SMSBarrage"
                  android:label="@string/app_name">
+                 
         <activity android:name=".ui.BarrageList"
                   android:label="@string/app_name">
             <intent-filter>
@@ -41,5 +42,6 @@
 	    		<action android:name="android.intent.action.BOOT_COMPLETED" />
 	    	</intent-filter>
 	    </receiver>
+	    
     </application>
 </manifest>

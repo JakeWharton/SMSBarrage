@@ -11,6 +11,11 @@
     <string name="prefs_title">SMSBarrage Preferences</string>
     <string name="about_title">SMSBarrage About</string>
     
+    <!--  Preferences -->
+    <string name="preference_auto_start">auto_start</string>
+    <string name="preference_auto_start_title">Auto-Start Service</string>
+    <string name="preference_auto_start_summary">This will allow incomplete barrages to resume when your device restarts.</string>
+    
     <!-- BarrageList options menu -->
     <string name="menu_new_barrage">New Barrage</string>
     <string name="menu_pause_all">Pause All</string>

@@ -1,6 +1,6 @@
 package com.jakewharton.smsbarrage.transaction;
 
-import com.jakewharton.smsbarrage.ui.Preferences;
+import com.jakewharton.smsbarrage.R;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -11,15 +11,21 @@ import android.os.PowerManager;
 import android.preference.PreferenceManager;
 
 public class EventReceiver extends BroadcastReceiver {
-	private static final String TAG="EventReceiver";
+	private static final String TAG = "EventReceiver";
 	
-	static final Object mStartingServiceSync = new Object();
-	static PowerManager.WakeLock mStartingService;
+	//Defaults
+	private static final boolean DEFAULT_AUTO_START = true;
+	
+	private static final Object mStartingServiceSync = new Object();
+	private static PowerManager.WakeLock mStartingService;
+	
+	//Instance
+	private static SharedPreferences settings;
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		SharedPreferences shared = PreferenceManager.getDefaultSharedPreferences(context);
-		if (shared.getBoolean(Preferences.PREF_AUTO_START, true)) {
+		settings = PreferenceManager.getDefaultSharedPreferences(context);
+		if (settings.getBoolean(context.getString(R.string.preference_auto_start), DEFAULT_AUTO_START)) {
 			intent.setClass(context, BarrageService.class);
 			intent.putExtra("result", getResultCode());
 			beginStartingService(context, intent);

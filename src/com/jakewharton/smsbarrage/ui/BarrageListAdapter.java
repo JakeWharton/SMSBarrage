@@ -8,7 +8,11 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 
 public class BarrageListAdapter extends CursorAdapter {
-	private static final String TAG="BarrageListAdapter";
+	private static final String TAG = "BarrageListAdapter";
+	
+	private static final String[] PROJECTION = new String[] {
+		
+	};
 	
 	private boolean mSimple;
 	private LayoutInflater mFactory;

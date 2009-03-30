@@ -13,7 +13,6 @@
     		android:paddingTop="10dip"
     		android:paddingBottom="10dip">
 		<com.android.mms.ui.RecipientsEditor
-			xmlns:android="http://schemas.android.com/apk/res/android"
 			android:id="@+id/recipients_editor"
 			android:hint="@string/compose_to_hint"
 			android:layout_width="fill_parent"
