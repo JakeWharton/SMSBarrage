@@ -1,73 +1,83 @@
 package com.jakewharton.smsbarrage;
 
-import android.app.Application;
-import android.preference.PreferenceManager;
+import com.android.mms.ui.RecipientsAdapter;
+import com.android.mms.ui.RecipientsEditor;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.telephony.gsm.SmsManager;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.SeekBar;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 
-public class SMSBarrage extends Application {
-	private static final String TAG = "SMSBarrage";
-	
-	@Override
-	public void onCreate() {
-		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
-	}
-}
-
-/*public class SMSBarrage extends Activity {
+public class SMSBarrage extends Activity {
 	private static final int PROGRESS_OFFSET = 2;
 	private static final String TAG = "SMSBarrage";
 	private static final String AGREED = "AGREED";
+	private static final String SMS_SENT = "SMS_SENT";
+	
+	private static final int MENU_ABOUT = 0;
 	
 	//UI Elements
 	private RecipientsEditor reTo;
 	private TextView textCount;
 	private SeekBar seekCount;
-	private TextView textDelay;
-	private SeekBar seekDelay;
 	private EditText editMessage;
 	private Button buttonSend;
 	
 	private SmsManager manager;
 	private int count = 2;
 	private int current = 0;
-	private int delay = 1000;
 	private String[] numbers;
 	private String message;
 	private ProgressDialog progress;
 	private SharedPreferences settings;
 	private SharedPreferences.Editor editor;
 	
+	private PendingIntent sentIntent;
+	
 	private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             
-            if (current >= count) {
-                progress.dismiss();
-                progress = null;
-            }
-            else {
-            	try {
-        			String number = numbers[current % numbers.length];
-        			manager.sendTextMessage(number, null, message, null, null);
-        			Log.i(TAG, "Sent message " + ((current / numbers.length) + 1) + " to " + number);
-            	}
-            	catch (StringIndexOutOfBoundsException e) {
-            		AlertDialog.Builder error = new AlertDialog.Builder(SMSBarrage.this)
-            			.setTitle(R.string.error_title)
-            			.setMessage(R.string.error)
-            			.setCancelable(false)
-            			.setPositiveButton(R.string.ok, null);
-            		error.show();
-            		progress.dismiss();
-            		progress = null;
-            		return;
-            	}
-            	current++;
-                progress.incrementProgressBy(1);
-                handler.sendEmptyMessageDelayed(0, delay);
-            }
+        	try {
+    			String number = numbers[current % numbers.length];
+    			manager.sendTextMessage(number, null, message, sentIntent, null);
+    			Log.i(TAG, "Sending message " + ((current / numbers.length) + 1) + " to " + number);
+        	}
+        	catch (StringIndexOutOfBoundsException e) {
+        		AlertDialog.Builder error = new AlertDialog.Builder(SMSBarrage.this)
+        			.setTitle(R.string.error_title)
+        			.setMessage(R.string.error)
+        			.setCancelable(false)
+        			.setPositiveButton(R.string.ok, null);
+        		error.show();
+        		progress.dismiss();
+        		progress = null;
+        		return;
+        	}
         }
 	};
+	
 	
 	private OnClickListener sendListener = new OnClickListener() {
 		public void onClick(View arg0) {
@@ -91,23 +101,30 @@ public class SMSBarrage extends Application {
 				return;
 			
 			progress.show();
+			
+			sentIntent = PendingIntent.getBroadcast(SMSBarrage.this, 0, new Intent(SMS_SENT), 0);
+			
 			handler.sendEmptyMessage(0);
 		}
 	};
 	private OnSeekBarChangeListener countListener = new OnSeekBarChangeListener() {
-		public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
-			textCount.setText(Integer.toString(arg1 + PROGRESS_OFFSET));
+		public void onProgressChanged(SeekBar seekBar, int newValue, boolean fromTouch) {
+			textCount.setText(Integer.toString(newValue + PROGRESS_OFFSET));
 		}
-		public void onStartTrackingTouch(SeekBar arg0) {}
-		public void onStopTrackingTouch(SeekBar arg0) {}
-	};
-	private OnSeekBarChangeListener delayListener = new OnSeekBarChangeListener() {
-		public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
-			delay = arg1;
-			textDelay.setText(Integer.toString(arg1));
+		public void onStartTrackingTouch(SeekBar seekBar) {}
+		public void onStopTrackingTouch(SeekBar seekBar) {
+			int progress = seekCount.getProgress();
+			if (progress == seekCount.getMax()) {
+				seekCount.setMax((2 * (seekCount.getMax() + PROGRESS_OFFSET)) - PROGRESS_OFFSET);
+				seekCount.setProgress(0);
+				seekCount.setProgress(progress);
+			}
+			else if ((progress <= seekCount.getMax() / 2) && (seekCount.getMax() > 100 - PROGRESS_OFFSET)) {
+				seekCount.setMax(((seekCount.getMax() + PROGRESS_OFFSET) / 2) - PROGRESS_OFFSET);
+				seekCount.setProgress(0);
+				seekCount.setProgress(progress);
+			}
 		}
-		public void onStartTrackingTouch(SeekBar arg0) {}
-		public void onStopTrackingTouch(SeekBar arg0) {}
 	};
 	private android.content.DialogInterface.OnClickListener agreeListener = new android.content.DialogInterface.OnClickListener() {
 		public void onClick(DialogInterface arg0, int arg1) {
@@ -132,6 +149,45 @@ public class SMSBarrage extends Application {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        registerReceiver(new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context arg0, Intent arg1) {
+				if (arg1.getAction().equals(SMS_SENT)) {
+					switch (getResultCode()) {
+						case Activity.RESULT_OK:
+			            	current++;
+			                progress.incrementProgressBy(1);
+			                
+			                if (current >= count) {
+			                    progress.dismiss();
+			                    progress = null;
+			                }
+			                else {
+			                	handler.sendEmptyMessage(0);
+			                }
+			                
+							return;
+							
+						case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
+							Toast.makeText(getBaseContext(), "Generic failure", Toast.LENGTH_SHORT).show();
+							break;
+							
+						case SmsManager.RESULT_ERROR_NO_SERVICE:
+							Toast.makeText(getBaseContext(), "No service.", Toast.LENGTH_SHORT).show();
+							break;
+							
+						case SmsManager.RESULT_ERROR_NULL_PDU:
+							Toast.makeText(getBaseContext(), "Null PDU.", Toast.LENGTH_SHORT).show();
+							break;
+							
+						case SmsManager.RESULT_ERROR_RADIO_OFF:
+							Toast.makeText(getBaseContext(), "Radio off.", Toast.LENGTH_SHORT).show();
+							break;
+					}
+					progress.dismiss();
+				}
+			}
+		}, new IntentFilter(SMS_SENT));
     }
 
 	@Override
@@ -156,14 +212,25 @@ public class SMSBarrage extends Application {
         seekCount = (SeekBar)findViewById(R.id.number_of_messages);
         seekCount.setOnSeekBarChangeListener(countListener);
         seekCount.setProgress(2 - PROGRESS_OFFSET);
-        textDelay = (TextView)findViewById(R.id.delay_count);
-        seekDelay = (SeekBar)findViewById(R.id.delay);
-        seekDelay.setOnSeekBarChangeListener(delayListener);
-        seekDelay.setProgress(1000);
         buttonSend = (Button)findViewById(R.id.send);
         buttonSend.setOnClickListener(sendListener);
         editMessage = (EditText)findViewById(R.id.message);
         reTo = (RecipientsEditor)findViewById(R.id.recipients_editor);
         reTo.setAdapter(new RecipientsAdapter(this));
 	}
-}*/
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.clear();
+		menu.add(0, MENU_ABOUT, 0, R.string.menu_about);
+		return true;
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_ABOUT:
+				startActivity(new Intent(this, About.class));
+				return true;
+		}
+		return false;
+	}
+}
