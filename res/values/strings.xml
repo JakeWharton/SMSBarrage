@@ -6,7 +6,9 @@
     <string name="app_by">by Jake Wharton</string>
     <string name="app_about"><a href="http://jakewharton.com">View Website</a>\n\n<a href="http://twitter.com/JakeWharton">Follow on Twitter</a>\n\n<a href="http://cyrket.com/search?q=com.jakewharton">View Other Android Applications</a></string>
     
+    <string name="menu_send">Send</string>
     <string name="menu_about">About</string>
+    <string name="menu_update">Check For Update</string>
     
 	<string name="to_hint">To</string>
 	<string name="number_of_messages">Number of Messages:</string>

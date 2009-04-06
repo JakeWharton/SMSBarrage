@@ -36,6 +36,6 @@
 		android:gravity="center"
 		android:layout_marginTop="20dip"
 		android:linksClickable="true"
-		android:autoLink="web"
+		android:autoLink="all"
 		android:text="@string/app_about"/>
 </LinearLayout>

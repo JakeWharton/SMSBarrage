@@ -1,4 +1,6 @@
-package com.jakewharton.smsbarrage;
+package com.jakewharton.smsbarrage.ui;
+
+import com.jakewharton.smsbarrage.R;
 
 import android.app.Activity;
 import android.os.Bundle;

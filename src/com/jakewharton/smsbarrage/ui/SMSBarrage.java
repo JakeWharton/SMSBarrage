@@ -1,7 +1,16 @@
-package com.jakewharton.smsbarrage;
+package com.jakewharton.smsbarrage.ui;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 
 import com.android.mms.ui.RecipientsAdapter;
 import com.android.mms.ui.RecipientsEditor;
+import com.jakewharton.smsbarrage.R;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
@@ -12,6 +21,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -34,7 +47,9 @@ public class SMSBarrage extends Activity {
 	private static final String AGREED = "AGREED";
 	private static final String SMS_SENT = "SMS_SENT";
 	
-	private static final int MENU_ABOUT = 0;
+	private static final int MENU_SEND = 0;
+	private static final int MENU_ABOUT = 1;
+	private static final int MENU_UPDATE = 2;
 	
 	//UI Elements
 	private RecipientsEditor reTo;
@@ -78,12 +93,15 @@ public class SMSBarrage extends Activity {
         }
 	};
 	
-	
 	private OnClickListener sendListener = new OnClickListener() {
 		public void onClick(View arg0) {
 			current = 0;
 			
 			numbers = reTo.getRecipientList().getNumbers();
+			if (numbers.length == 0) {
+				Toast.makeText(getBaseContext(), "Recipients must not be blank.", Toast.LENGTH_SHORT).show();
+				return;
+			}
 			
 			count = seekCount.getProgress() + PROGRESS_OFFSET;
 			count *= numbers.length;
@@ -92,13 +110,14 @@ public class SMSBarrage extends Activity {
 			progress.setTitle(R.string.sending);
 	        progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 	        progress.setButton(getString(R.string.stop), cancelListener);
-
 			progress.setMax(count);
 			progress.setProgress(0);
 			
 			message = editMessage.getText().toString();
-			if (message.length() == 0)
+			if (message.length() == 0) {
+				Toast.makeText(getBaseContext(), "Message must not be blank.", Toast.LENGTH_SHORT).show();
 				return;
+			}
 			
 			progress.show();
 			
@@ -144,11 +163,34 @@ public class SMSBarrage extends Activity {
 			count = 0;
 		}
 	};
+	private android.content.DialogInterface.OnClickListener updateListener = new android.content.DialogInterface.OnClickListener() {
+		public void onClick(DialogInterface arg0, int arg1) {
+			Intent i = new Intent(Intent.ACTION_VIEW);
+			Uri u = Uri.parse("http://jakewharton.com/downloads/");
+			i.setData(u);
+			startActivity(i);
+			SMSBarrage.this.finish();
+		}
+	};
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+		
+		settings = getSharedPreferences(TAG, 0);
+		if (!settings.getBoolean(AGREED, false)) {
+			new AlertDialog.Builder(SMSBarrage.this)
+				.setTitle(R.string.warning_title)
+				.setMessage(R.string.warning)
+				.setPositiveButton(R.string.agree, agreeListener)
+				.setNegativeButton(R.string.disagree, disagreeListener)
+				.setCancelable(false)
+				.show();
+		}
+
+        manager = SmsManager.getDefault();
+        
         registerReceiver(new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context arg0, Intent arg1) {
@@ -189,48 +231,116 @@ public class SMSBarrage extends Activity {
 			}
 		}, new IntentFilter(SMS_SENT));
     }
-
-	@Override
-	protected void onStart() {
-		super.onStart();
-		
-		settings = getSharedPreferences(TAG, 0);
-		
-		if (!settings.getBoolean(AGREED, false)) {
-			AlertDialog.Builder warning = new AlertDialog.Builder(SMSBarrage.this)
-				.setTitle(R.string.warning_title)
-				.setMessage(R.string.warning)
-				.setPositiveButton(R.string.agree, agreeListener)
-				.setNegativeButton(R.string.disagree, disagreeListener)
-				.setCancelable(false);
-        	warning.show();
-		}
-
-        manager = SmsManager.getDefault();
+    @Override
+    public void onStart() {
+    	super.onStart();
         
         textCount = (TextView)findViewById(R.id.number_of_messages_count);
         seekCount = (SeekBar)findViewById(R.id.number_of_messages);
         seekCount.setOnSeekBarChangeListener(countListener);
-        seekCount.setProgress(2 - PROGRESS_OFFSET);
         buttonSend = (Button)findViewById(R.id.send);
         buttonSend.setOnClickListener(sendListener);
         editMessage = (EditText)findViewById(R.id.message);
         reTo = (RecipientsEditor)findViewById(R.id.recipients_editor);
         reTo.setAdapter(new RecipientsAdapter(this));
-	}
+    }
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.clear();
+		menu.add(0, MENU_SEND, 0, R.string.menu_send);
 		menu.add(0, MENU_ABOUT, 0, R.string.menu_about);
+		menu.add(0, MENU_UPDATE, 0, R.string.menu_update);
 		return true;
 	}
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+			case MENU_SEND:
+				sendListener.onClick(null);
+				return true;
+				
 			case MENU_ABOUT:
 				startActivity(new Intent(this, About.class));
+				return true;
+				
+			case MENU_UPDATE:
+				checkUpdate.sendEmptyMessage(0);
 				return true;
 		}
 		return false;
 	}
+	
+	private Handler checkUpdate = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+			final int BUFFER_SIZE = 4;
+			final String UPDATE_URL = "http://versioncheck.jakewharton.com/smsbarrage";
+			
+			InputStream in = null;
+			try {
+		        int response = -1;
+		        
+		        URL url = new URL(UPDATE_URL);
+		        URLConnection conn = url.openConnection();
+		        
+		        if (!(conn instanceof HttpURLConnection))                     
+		            throw new IOException("Not an HTTP connection");
+		        
+	            HttpURLConnection httpConn = (HttpURLConnection) conn;
+	            httpConn.setAllowUserInteraction(false);
+	            httpConn.setInstanceFollowRedirects(true);
+	            httpConn.setRequestMethod("GET");
+	            httpConn.connect(); 
+	
+	            response = httpConn.getResponseCode();                 
+	            if (response == HttpURLConnection.HTTP_OK) {
+	                in = httpConn.getInputStream();                                 
+	            }                     
+			} catch (IOException e1) {
+				Toast.makeText(getBaseContext(), "Unable to open connection to server.", Toast.LENGTH_SHORT).show();
+				return;
+			}
+			
+			InputStreamReader isr = new InputStreamReader(in);
+			int charRead;
+			String str = "";
+			char[] inputBuffer = new char[BUFFER_SIZE];
+			try {
+				while ((charRead = isr.read(inputBuffer)) > 0) {
+					String readString = String.copyValueOf(inputBuffer, 0, charRead);
+					str += readString;
+					inputBuffer = new char[BUFFER_SIZE];
+				}
+				in.close();
+			} catch (IOException e) {
+				Toast.makeText(getBaseContext(), "Unable to locate newest version.", Toast.LENGTH_SHORT).show();
+				return;
+			}
+			str = str.trim();
+			
+			final int serverVersion = Integer.parseInt(str);
+			int localVersion;
+			try {
+				PackageManager manager = getBaseContext().getPackageManager();
+				PackageInfo info = manager.getPackageInfo(getBaseContext().getPackageName(), 0);
+				localVersion = info.versionCode;
+			} catch (NameNotFoundException e) {
+				Toast.makeText(getBaseContext(), "Unable to read local version.", Toast.LENGTH_SHORT).show();
+				return;
+			}
+	
+			if (serverVersion > localVersion) {
+				new AlertDialog.Builder(SMSBarrage.this)
+					.setTitle("New Version Available")
+					.setMessage("A newer version of this package is available online. Would you like to go to the website to download it?")
+					.setPositiveButton("Yes", updateListener)
+					.setNegativeButton("No", null)
+					.setCancelable(false)
+					.show();
+			}
+			else {
+				Toast.makeText(getBaseContext(), "This version is up to date.", Toast.LENGTH_SHORT).show();
+			}
+		}
+	};
 }
