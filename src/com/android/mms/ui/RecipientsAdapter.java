@@ -97,7 +97,7 @@ public class RecipientsAdapter extends ResourceCursorAdapter {
             return number;
         }
 
-        SpannableString out = new SpannableString(number);
+        SpannableString out = new SpannableString(RecipientList.Recipient.buildNameAndNumber(name, number));
         int len = out.length();
 
         if (!TextUtils.isEmpty(name)) {
