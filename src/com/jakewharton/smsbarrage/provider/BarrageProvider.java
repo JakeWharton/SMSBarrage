@@ -10,7 +10,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 public class BarrageProvider {
-	private static final String TAG = "Barrage";
+	private static final String TAG = "BarrageProvider";
 	
 	//Folders
 	public static final int TYPE_ALL      = 0;
